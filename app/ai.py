@@ -5,7 +5,7 @@ from pypdf import PdfReader
 from app.config import SARVAM_API_KEY
 
 SARVAM_URL = "https://api.sarvam.ai/v1/chat/completions"
-RESUME_PATH = "resumes/resume_ai.pdf"
+RESUME_PATH = "resumes/resume.pdf"
 
 
 # -------------------------------------------------------

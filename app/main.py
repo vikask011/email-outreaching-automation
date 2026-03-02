@@ -110,7 +110,7 @@ def send(
                 to_email=email,
                 subject=subject,
                 body=personalized_body,
-                resume_path="resumes/resume_ai.pdf"
+                resume_path="resumes/resume.pdf"
             )
             # ✅ Log success
             log_email(

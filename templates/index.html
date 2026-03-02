@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Outreach Agent — Vikas K</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0b0c0e;
+  --surface: #111316;
+  --surface2: #0e1014;
+  --border: #1e2128;
+  --border-active: #3a3f4a;
+  --text: #e8eaf0;
+  --muted: #6b7280;
+  --accent: #c8f76a;
+  --accent-glow: rgba(200, 247, 106, 0.08);
+  --amber: #f5c542;
+  --amber-glow: rgba(245, 197, 66, 0.07);
+  --red: #ff6b6b;
+  --green: #6bffb3;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 20px 80px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.25;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container { width: 100%; max-width: 700px; position: relative; z-index: 1; }
+
+/* Header */
+header { margin-bottom: 40px; animation: fadeUp 0.5s ease both; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--accent-glow);
+  border: 1px solid rgba(200,247,106,0.2);
+  color: var(--accent);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 0.1em;
+  padding: 4px 10px; border-radius: 999px; margin-bottom: 16px;
+}
+.badge::before {
+  content: ''; width: 6px; height: 6px;
+  background: var(--accent); border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+h1 {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(1.8rem, 5vw, 2.7rem);
+  font-weight: 400; line-height: 1.15; letter-spacing: -0.02em;
+}
+h1 em { font-style: italic; color: var(--accent); }
+.subtitle { margin-top: 10px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+
+/* Card */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 26px 28px; margin-bottom: 14px;
+  animation: fadeUp 0.5s ease both; animation-delay: 0.08s;
+  transition: border-color 0.3s;
+}
+.card:focus-within { border-color: var(--border-active); }
+
+.card-title {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 18px;
+}
+
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 10px; }
+@media (max-width: 480px) { .row { grid-template-columns: 1fr; } }
+
+.field-group { margin-bottom: 10px; }
+
+label {
+  display: block; font-size: 11px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 7px;
+}
+
+input[type="email"], input[type="text"], textarea {
+  width: 100%; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); font-family: 'DM Mono', monospace;
+  font-size: 13px; padding: 11px 13px; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+input:focus, textarea:focus {
+  border-color: rgba(200,247,106,0.3);
+  box-shadow: 0 0 0 3px rgba(200,247,106,0.05);
+}
+input::placeholder, textarea::placeholder { color: #2c313b; }
+textarea { resize: vertical; line-height: 1.65; }
+textarea[name="prompt"] { min-height: 120px; }
+
+/* Recipient remove */
+.recipient-row { position: relative; }
+.remove-btn {
+  position: absolute; top: 0; right: 0;
+  background: transparent; border: none; color: #3a3f4a;
+  font-size: 18px; cursor: pointer; padding: 0 4px; line-height: 1;
+  transition: color 0.2s; flex: none;
+}
+.remove-btn:hover { color: var(--red); }
+
+/* Style pills */
+.style-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.style-pill { position: relative; }
+.style-pill input[type="radio"] { position: absolute; opacity: 0; width: 0; }
+.style-pill label {
+  display: block; font-family: 'DM Mono', monospace; font-size: 12px;
+  font-weight: 500; letter-spacing: 0.02em; text-transform: none;
+  color: var(--muted); background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 999px;
+  padding: 6px 14px; cursor: pointer; transition: all 0.2s; margin-bottom: 0;
+}
+.style-pill input[type="radio"]:checked + label {
+  background: var(--accent-glow);
+  border-color: rgba(200,247,106,0.3); color: var(--accent);
+}
+.style-pill label:hover { border-color: var(--border-active); color: var(--text); }
+
+/* Buttons */
+.submit-row {
+  display: flex; align-items: center; gap: 14px;
+  animation: fadeUp 0.5s ease both; animation-delay: 0.15s;
+}
+
+button.primary {
+  flex: 1; background: var(--accent); color: #0b0c0e; border: none;
+  border-radius: 10px; font-family: 'Syne', sans-serif;
+  font-size: 14px; font-weight: 700; letter-spacing: 0.04em;
+  padding: 15px; cursor: pointer;
+  transition: opacity 0.2s, box-shadow 0.2s, transform 0.1s;
+}
+button.primary:hover { opacity: 0.9; box-shadow: 0 0 26px rgba(200,247,106,0.16); }
+button.primary:active { transform: scale(0.99); }
+button.primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+button.secondary {
+  background: transparent; border: 1px solid var(--border);
+  color: var(--muted); border-radius: 8px;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  padding: 8px 14px; cursor: pointer; transition: all 0.2s; flex: none;
+}
+button.secondary:hover { border-color: var(--border-active); color: var(--text); }
+
+button.tab-btn {
+  background: transparent; border: none;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  font-weight: 500; letter-spacing: 0.05em;
+  color: var(--muted); padding: 6px 12px; cursor: pointer;
+  border-radius: 6px; transition: all 0.2s;
+}
+button.tab-btn.active {
+  background: var(--surface2);
+  border: 1px solid var(--border); color: var(--text);
+}
+
+/* Loading */
+.loading {
+  display: none; align-items: center; gap: 8px;
+  color: var(--muted); font-size: 12px;
+  font-family: 'DM Mono', monospace; white-space: nowrap;
+}
+.loading.active { display: flex; }
+.spinner {
+  width: 15px; height: 15px;
+  border: 2px solid var(--border); border-top-color: var(--accent);
+  border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0;
+}
+
+/* Alerts */
+.alert {
+  border-radius: 10px; padding: 13px 18px;
+  font-family: 'DM Mono', monospace; font-size: 12px;
+  line-height: 1.6; margin-bottom: 16px;
+  animation: fadeUp 0.4s ease both;
+}
+.alert-success {
+  background: rgba(107,255,179,0.07);
+  border: 1px solid rgba(107,255,179,0.2); color: var(--green);
+}
+.alert-error {
+  background: rgba(255,107,107,0.07);
+  border: 1px solid rgba(255,107,107,0.2); color: var(--red);
+}
+
+/* Notice */
+.notice {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: var(--amber-glow);
+  border: 1px solid rgba(245,197,66,0.2);
+  border-radius: 8px; padding: 11px 14px; margin-bottom: 18px;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  color: var(--amber); line-height: 1.55;
+}
+.notice-icon { flex-shrink: 0; margin-top: 1px; }
+
+/* Draft card */
+.draft-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 28px; margin-top: 24px;
+  animation: fadeUp 0.5s ease both;
+}
+
+.draft-top {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 16px;
+}
+.draft-label {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted);
+}
+.tab-group { display: flex; gap: 4px; }
+
+/* Recipient tags */
+.recipient-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+.recipient-tag {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 999px; padding: 4px 10px; color: var(--muted);
+}
+.recipient-tag span { color: var(--text); }
+
+/* Subject */
+.subject-field {
+  width: 100%; background: transparent; border: none;
+  border-bottom: 1px solid var(--border); border-radius: 0;
+  font-family: 'Instrument Serif', serif; font-size: 1.2rem;
+  color: var(--text); padding: 0 0 14px 0; margin-bottom: 18px;
+  outline: none; transition: border-color 0.2s;
+}
+.subject-field:focus { border-bottom-color: rgba(200,247,106,0.3); }
+
+/* Edit mode — raw textarea */
+.body-edit {
+  width: 100%; background: var(--surface2);
+  border: 1px solid var(--border); border-radius: 8px;
+  color: #9aa3b4; font-family: 'DM Mono', monospace;
+  font-size: 13px; line-height: 1.85; resize: vertical;
+  outline: none; min-height: 240px; padding: 16px;
+  transition: border-color 0.2s;
+}
+.body-edit:focus { border-color: rgba(200,247,106,0.25); }
+
+/* Preview mode — rendered paragraphs */
+.body-preview {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 16px; min-height: 240px;
+  color: #9aa3b4; font-family: 'DM Mono', monospace;
+  font-size: 13px; line-height: 1.85;
+}
+.body-preview p { margin-bottom: 1em; }
+.body-preview p:last-child { margin-bottom: 0; }
+
+.draft-actions {
+  display: flex; gap: 10px; margin-top: 20px;
+  padding-top: 18px; border-top: 1px solid var(--border);
+  flex-wrap: wrap; align-items: center;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <header>
+    <div class="badge">AI Outreach Agent</div>
+    <h1>Generate. Review.<br/><em>Then send.</em></h1>
+    <p class="subtitle">Write the role. Get a draft. Edit if needed. Send to everyone.</p>
+  </header>
+
+  {% if success %}
+  <div class="alert alert-success">
+    {{ success }}
+    {% if recipients %}
+     — {{ recipients | map(attribute=1) | join(', ') }}
+    {% endif %}
+  </div>
+  {% endif %}
+  {% if error %}
+  <div class="alert alert-error">{{ error }}</div>
+  {% endif %}
+
+  <!-- ======== Generate Form ======== -->
+  <form action="/generate" method="post" onsubmit="handleGenerate(event)">
+
+    <div class="card">
+      <div class="card-title">Recipients</div>
+      <div id="recipient-container">
+        {% if recipients %}
+          {% for name, email in recipients %}
+          <div class="row recipient-row" id="row-{{ loop.index0 }}" {% if not loop.first %}style="margin-top:12px;"{% endif %}>
+            <div class="field-group">
+              <label>Name <span style="color:#2c313b;font-size:10px;">(optional)</span></label>
+              <input type="text" name="names" placeholder="Priya" value="{{ name }}">
+            </div>
+            <div class="field-group">
+              <label>Email <span style="color:var(--accent);">*</span></label>
+              <input type="email" name="emails" required placeholder="priya@company.com" value="{{ email }}">
+            </div>
+            {% if not loop.first %}
+            <button type="button" class="remove-btn" onclick="removeRecipient('row-{{ loop.index0 }}')" title="Remove">×</button>
+            {% endif %}
+          </div>
+          {% endfor %}
+        {% else %}
+        <div class="row recipient-row" id="row-0">
+          <div class="field-group">
+            <label>Name <span style="color:#2c313b;font-size:10px;">(optional)</span></label>
+            <input type="text" name="names" placeholder="Priya">
+          </div>
+          <div class="field-group">
+            <label>Email <span style="color:var(--accent);">*</span></label>
+            <input type="email" name="emails" required placeholder="priya@company.com">
+          </div>
+        </div>
+        {% endif %}
+      </div>
+      <button type="button" class="secondary" style="margin-top:12px;" onclick="addRecipient()">+ Add Recipient</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Email Style</div>
+      <div class="style-pills">
+        <div class="style-pill">
+          <input type="radio" name="email_style" id="s-targeted" value="targeted"
+            {% if not email_style or email_style == 'targeted' %}checked{% endif %}>
+          <label for="s-targeted">Targeted Application</label>
+        </div>
+        <div class="style-pill">
+          <input type="radio" name="email_style" id="s-cold" value="cold"
+            {% if email_style == 'cold' %}checked{% endif %}>
+          <label for="s-cold">Cold Outreach</label>
+        </div>
+        <div class="style-pill">
+          <input type="radio" name="email_style" id="s-referral" value="referral"
+            {% if email_style == 'referral' %}checked{% endif %}>
+          <label for="s-referral">Referral / Inquiry</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Role Description</div>
+      <textarea name="prompt" placeholder="Describe the role or paste the job description.&#10;&#10;Include company name, key responsibilities, and tech stack if you have them." required>{{ prompt or '' }}</textarea>
+    </div>
+
+    <div class="submit-row">
+      <button type="submit" class="primary" id="generate-btn">Generate Draft →</button>
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        Writing your email...
+      </div>
+    </div>
+
+  </form>
+
+  <!-- ======== Draft ======== -->
+  {% if draft_ready %}
+  <div class="draft-card">
+
+    <div class="draft-top">
+      <span class="draft-label">Draft</span>
+      <div class="tab-group">
+        <button type="button" class="tab-btn active" id="tab-preview" onclick="switchTab('preview')">Preview</button>
+        <button type="button" class="tab-btn" id="tab-edit" onclick="switchTab('edit')">Edit</button>
+      </div>
+    </div>
+
+    <!-- Recipient tags -->
+    <div class="recipient-tags">
+      {% for name, email in recipients %}
+      <div class="recipient-tag">
+        {% if name %}<span>{{ name }}</span> · {% endif %}{{ email }}
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Multi-recipient notice -->
+    {% if is_multi %}
+    <div class="notice">
+      <span class="notice-icon">⚠</span>
+      <span>
+        Greeting shows <strong>Dear Hiring Manager,</strong> in this draft.
+        Each email will be personalized on send —
+        e.g. <em>Dear {{ recipients[0][0] if recipients[0][0] else 'the recipient' }},</em>
+      </span>
+    </div>
+    {% endif %}
+
+    <form action="/send" method="post" onsubmit="syncBodyBeforeSend(); handleSend(event)">
+
+      {% for name, email in recipients %}
+      <input type="hidden" name="names" value="{{ name }}">
+      <input type="hidden" name="emails" value="{{ email }}">
+      {% endfor %}
+
+      <!-- Subject -->
+      <input type="text" name="subject" id="subject-field"
+        class="subject-field" value="{{ subject }}" placeholder="Subject line..."/>
+
+      <!-- Hidden body field — always submitted -->
+      <textarea name="body" id="body-hidden" style="display:none;">{{ body }}</textarea>
+
+      <!-- PREVIEW mode -->
+      <div class="body-preview" id="body-preview">
+        {% for para in body.split('\n\n') %}
+          {% if para.strip() %}
+          <p>{{ para.strip() }}</p>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <!-- EDIT mode -->
+      <textarea class="body-edit" id="body-edit"
+        style="display:none;" oninput="syncPreview()">{{ body }}</textarea>
+
+      <div class="draft-actions">
+        <button type="submit" class="primary" id="send-btn" style="flex:none;padding:13px 28px;">
+          Confirm &amp; Send
+        </button>
+        <button type="button" class="secondary" onclick="copyDraft()">Copy</button>
+        <div class="loading" id="send-loading" style="margin-left:4px;">
+          <div class="spinner"></div>
+          Sending...
+        </div>
+      </div>
+
+    </form>
+  </div>
+  {% endif %}
+
+</div>
+
+<script>
+  let recipientCount = document.querySelectorAll('.recipient-row').length;
+
+  // Auto-scroll to draft if it exists, else scroll to top for alerts
+  window.addEventListener('load', () => {
+    const draft = document.querySelector('.draft-card');
+    const alert = document.querySelector('.alert');
+    if (draft) {
+      setTimeout(() => draft.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+    } else if (alert) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+  let currentTab = 'preview';
+
+  function handleGenerate(e) {
+    const btn = document.getElementById('generate-btn');
+    btn.disabled = true;
+    btn.textContent = 'Generating...';
+    document.getElementById('loading').classList.add('active');
+  }
+
+  function handleSend(e) {
+    const btn = document.getElementById('send-btn');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    document.getElementById('send-loading').classList.add('active');
+  }
+
+  function addRecipient() {
+    recipientCount++;
+    const container = document.getElementById('recipient-container');
+    const div = document.createElement('div');
+    div.className = 'row recipient-row';
+    div.id = `row-${recipientCount}`;
+    div.style.marginTop = '12px';
+    div.innerHTML = `
+      <div class="field-group">
+        <label>Name <span style="color:#2c313b;font-size:10px;">(optional)</span></label>
+        <input type="text" name="names" placeholder="Name">
+      </div>
+      <div class="field-group">
+        <label>Email <span style="color:var(--accent);">*</span></label>
+        <input type="email" name="emails" required placeholder="email@company.com">
+      </div>
+      <button type="button" class="remove-btn" onclick="removeRecipient('row-${recipientCount}')" title="Remove">×</button>
+    `;
+    container.appendChild(div);
+  }
+
+  function removeRecipient(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  }
+
+  function switchTab(tab) {
+    currentTab = tab;
+    const preview = document.getElementById('body-preview');
+    const edit = document.getElementById('body-edit');
+    const tabPreview = document.getElementById('tab-preview');
+    const tabEdit = document.getElementById('tab-edit');
+
+    if (tab === 'preview') {
+      // Sync preview from edit textarea before showing
+      syncPreview();
+      preview.style.display = 'block';
+      edit.style.display = 'none';
+      tabPreview.classList.add('active');
+      tabEdit.classList.remove('active');
+    } else {
+      preview.style.display = 'none';
+      edit.style.display = 'block';
+      tabPreview.classList.remove('active');
+      tabEdit.classList.add('active');
+      edit.focus();
+    }
+  }
+
+  function syncPreview() {
+    const edit = document.getElementById('body-edit');
+    const preview = document.getElementById('body-preview');
+    const hidden = document.getElementById('body-hidden');
+    if (!edit || !preview) return;
+
+    const text = edit.value;
+    hidden.value = text;
+
+    // Render paragraphs
+    const paras = text.split(/\n\n+/);
+    preview.innerHTML = paras
+      .filter(p => p.trim())
+      .map(p => `<p>${p.trim().replace(/\n/g, '<br>')}</p>`)
+      .join('');
+  }
+
+  function syncBodyBeforeSend() {
+    // Make sure hidden textarea has latest value before form submits
+    const edit = document.getElementById('body-edit');
+    const hidden = document.getElementById('body-hidden');
+    if (edit && hidden && currentTab === 'edit') {
+      hidden.value = edit.value;
+    }
+  }
+
+  function copyDraft() {
+    const subject = document.getElementById('subject-field')?.value || '';
+    const body = document.getElementById('body-hidden')?.value || '';
+    navigator.clipboard.writeText(`Subject: ${subject}\n\n${body}`).then(() => {
+      const btn = event.target;
+      const orig = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = orig, 2000);
+    });
+  }
+</script>
+</body>
+</html>

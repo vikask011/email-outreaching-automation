@@ -3,3 +3,5 @@ uvicorn
 jinja2
 requests
 python-dotenv
+psycopg2-binary
+asyncpg

@@ -6,9 +6,15 @@ import time
 
 from app.ai import generate_email
 from app.email_service import send_email
+from app.database import init_db, log_email, get_all_logs, get_stats
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
+
+# Initialize DB table on startup
+@app.on_event("startup")
+def startup():
+    init_db()
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -28,7 +34,6 @@ def generate(
     email_style: str = Form("targeted")
 ):
     try:
-        # Clean inputs
         names = [n.strip() for n in names]
         emails = [e.strip() for e in emails]
         recipients = list(zip(names, emails))
@@ -36,8 +41,6 @@ def generate(
         is_single = len(recipients) == 1
         first_name = names[0] if is_single and names[0] else ""
 
-        # Single recipient: personalize draft directly
-        # Multiple recipients: generate with blank name, personalize at send time
         email_data = generate_email(
             user_instruction=prompt,
             recipient_name=first_name,
@@ -91,10 +94,8 @@ def send(
         email = email.strip()
         name = name.strip()
 
-        # Replace greeting with recipient's name if available
         personalized_body = body
         if name:
-            # Replace any existing "Dear ..., " greeting line
             import re
             personalized_body = re.sub(
                 r"^Dear [^,\n]+,",
@@ -111,11 +112,27 @@ def send(
                 body=personalized_body,
                 resume_path="resumes/resume_ai.pdf"
             )
+            # ✅ Log success
+            log_email(
+                recipient_name=name,
+                recipient_email=email,
+                subject=subject,
+                status="sent"
+            )
             sent_count += 1
-            time.sleep(2)  # avoid Gmail rate limiting
+            time.sleep(2)
 
         except Exception as e:
-            failed.append(f"{email} ({str(e)})")
+            error_msg = str(e)
+            # ❌ Log failure
+            log_email(
+                recipient_name=name,
+                recipient_email=email,
+                subject=subject,
+                status="failed",
+                error_message=error_msg
+            )
+            failed.append(f"{email} ({error_msg})")
 
     all_recipients = list(zip([n.strip() for n in names], [e.strip() for e in emails]))
 
@@ -136,4 +153,17 @@ def send(
             "success": f"✓ Sent to {sent_count} recipient{'s' if sent_count != 1 else ''}",
             "recipients": all_recipients,
         }
+    )
+
+
+# ==============================
+# History Page
+# ==============================
+@app.get("/history", response_class=HTMLResponse)
+def history(request: Request):
+    logs = get_all_logs(limit=200)
+    stats = get_stats()
+    return templates.TemplateResponse(
+        "history.html",
+        {"request": request, "logs": logs, "stats": stats}
     )
